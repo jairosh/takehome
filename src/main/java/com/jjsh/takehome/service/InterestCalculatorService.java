@@ -1,4 +1,4 @@
-package com.jjsh.takehome.model.service;
+package com.jjsh.takehome.service;
 
 import com.jjsh.takehome.model.InterestRequest;
 import com.jjsh.takehome.model.Payment;

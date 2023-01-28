@@ -3,7 +3,7 @@ package com.jjsh.takehome.controller;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jjsh.takehome.model.InterestRequest;
 import com.jjsh.takehome.model.Payment;
-import com.jjsh.takehome.model.service.InterestCalculatorService;
+import com.jjsh.takehome.service.InterestCalculatorService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

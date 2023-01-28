@@ -15,14 +15,12 @@ public class InterestRequest {
     private Long id;
 
     @NotNull
-    @NotBlank
     @DecimalMax("999999.0")
     @DecimalMin("1.0")
     @Column(name = "amount")
     private Double amount;
 
     @NotNull
-    @NotBlank
     @DecimalMax("1.0")
     @DecimalMin("0.01")
     @Column(name="rate")
@@ -30,7 +28,7 @@ public class InterestRequest {
 
     @Max(52)
     @Min(4)
-    @NotNull @NotBlank
+    @NotNull
     @Column(name = "terms")
     private Integer terms;
 }
