@@ -1,0 +1,172 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > SimpleInterestCalculatorServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.jjsh.takehome.service</a>
+</div>
+
+<h1>Coverage Summary for Class: SimpleInterestCalculatorServiceImpl (com.jjsh.takehome.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SimpleInterestCalculatorServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (21/21)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package com.jjsh.takehome.service;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import com.jjsh.takehome.dao.RequestRepository;
+<i class="no-highlight">4</i>&nbsp;import com.jjsh.takehome.dao.ResponseRepository;
+<i class="no-highlight">5</i>&nbsp;import com.jjsh.takehome.model.InterestRequest;
+<i class="no-highlight">6</i>&nbsp;import com.jjsh.takehome.model.Payment;
+<i class="no-highlight">7</i>&nbsp;import lombok.extern.slf4j.Slf4j;
+<i class="no-highlight">8</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i class="no-highlight">9</i>&nbsp;import org.springframework.stereotype.Service;
+<i class="no-highlight">10</i>&nbsp;
+<i class="no-highlight">11</i>&nbsp;import java.time.LocalDate;
+<i class="no-highlight">12</i>&nbsp;import java.util.ArrayList;
+<i class="no-highlight">13</i>&nbsp;import java.util.List;
+<i class="no-highlight">14</i>&nbsp;
+<i class="no-highlight">15</i>&nbsp;@Service
+<b class="fc"><i class="no-highlight">16</i>&nbsp;@Slf4j</b>
+<b class="fc"><i class="no-highlight">17</i>&nbsp;public class SimpleInterestCalculatorServiceImpl implements InterestCalculatorService{</b>
+<i class="no-highlight">18</i>&nbsp;
+<i class="no-highlight">19</i>&nbsp;    @Autowired
+<i class="no-highlight">20</i>&nbsp;    private RequestRepository requestRepository;
+<i class="no-highlight">21</i>&nbsp;
+<i class="no-highlight">22</i>&nbsp;    @Autowired
+<i class="no-highlight">23</i>&nbsp;    private ResponseRepository responseRepository;
+<i class="no-highlight">24</i>&nbsp;
+<i class="no-highlight">25</i>&nbsp;    /**
+<i class="no-highlight">26</i>&nbsp;     * Creates a detailed list of weekly payments for a loan
+<i class="no-highlight">27</i>&nbsp;     * @param request The loan request, includes principal, a yearly rate and payment terms
+<i class="no-highlight">28</i>&nbsp;     * @return A list of installments
+<i class="no-highlight">29</i>&nbsp;     */
+<i class="no-highlight">30</i>&nbsp;    @Override
+<i class="no-highlight">31</i>&nbsp;    public List&lt;Payment&gt; calculatePayments(InterestRequest request) {
+<b class="fc"><i class="no-highlight">32</i>&nbsp;        List&lt;Payment&gt; thePayments = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">33</i>&nbsp;        Double weeklyPayment = calculateWeeklyPayment(request.getAmount(), request.getRate(), request.getTerms());</b>
+<i class="no-highlight">34</i>&nbsp;
+<b class="fc"><i class="no-highlight">35</i>&nbsp;        InterestRequest savedRequest = requestRepository.save(request);</b>
+<i class="no-highlight">36</i>&nbsp;
+<b class="fc"><i class="no-highlight">37</i>&nbsp;        LocalDate today = LocalDate.now();</b>
+<b class="fc"><i class="no-highlight">38</i>&nbsp;        LocalDate paymentDate = today.plusWeeks(1);</b>
+<i class="no-highlight">39</i>&nbsp;
+<b class="fc"><i class="no-highlight">40</i>&nbsp;        for(int i=1; i&lt;= request.getTerms(); i++){</b>
+<b class="fc"><i class="no-highlight">41</i>&nbsp;            Payment payment = Payment.builder()</b>
+<b class="fc"><i class="no-highlight">42</i>&nbsp;                    .payment_date(paymentDate)</b>
+<b class="fc"><i class="no-highlight">43</i>&nbsp;                    .request(savedRequest)</b>
+<b class="fc"><i class="no-highlight">44</i>&nbsp;                    .id(null)</b>
+<b class="fc"><i class="no-highlight">45</i>&nbsp;                    .payment_number(i)</b>
+<b class="fc"><i class="no-highlight">46</i>&nbsp;                    .amount(weeklyPayment)</b>
+<b class="fc"><i class="no-highlight">47</i>&nbsp;                    .build();</b>
+<i class="no-highlight">48</i>&nbsp;
+<b class="fc"><i class="no-highlight">49</i>&nbsp;            Payment savedPayment = responseRepository.save(payment);</b>
+<b class="fc"><i class="no-highlight">50</i>&nbsp;            thePayments.add(savedPayment);</b>
+<b class="fc"><i class="no-highlight">51</i>&nbsp;            paymentDate = paymentDate.plusWeeks(1);</b>
+<i class="no-highlight">52</i>&nbsp;        }
+<b class="fc"><i class="no-highlight">53</i>&nbsp;        return thePayments;</b>
+<i class="no-highlight">54</i>&nbsp;    }
+<i class="no-highlight">55</i>&nbsp;
+<i class="no-highlight">56</i>&nbsp;    /**
+<i class="no-highlight">57</i>&nbsp;     * Calculates the payments for a simple interest loan, calculated in weekly payments and a yearly rate
+<i class="no-highlight">58</i>&nbsp;     * @param principal The loan amount
+<i class="no-highlight">59</i>&nbsp;     * @param rate The interest rate per year
+<i class="no-highlight">60</i>&nbsp;     * @param weeks The number of weeks for the loan
+<i class="no-highlight">61</i>&nbsp;     * @return How much the weekly payment must be
+<i class="no-highlight">62</i>&nbsp;     */
+<i class="no-highlight">63</i>&nbsp;    private Double calculateWeeklyPayment(Double principal, Double rate, Integer weeks){
+<b class="fc"><i class="no-highlight">64</i>&nbsp;        Double totalCost = principal * (1 + (rate * (weeks / 52.0)));</b>
+<b class="fc"><i class="no-highlight">65</i>&nbsp;        return totalCost / weeks;</b>
+<i class="no-highlight">66</i>&nbsp;    }
+<i class="no-highlight">67</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-01-28 22:11</div>
+</div>
+</body>
+</html>
