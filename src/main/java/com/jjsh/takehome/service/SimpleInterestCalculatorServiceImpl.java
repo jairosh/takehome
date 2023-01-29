@@ -1,8 +1,11 @@
 package com.jjsh.takehome.service;
 
+import com.jjsh.takehome.dao.RequestRepository;
+import com.jjsh.takehome.dao.ResponseRepository;
 import com.jjsh.takehome.model.InterestRequest;
 import com.jjsh.takehome.model.Payment;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -12,6 +15,12 @@ import java.util.List;
 @Service
 @Slf4j
 public class SimpleInterestCalculatorServiceImpl implements InterestCalculatorService{
+
+    @Autowired
+    private RequestRepository requestRepository;
+
+    @Autowired
+    private ResponseRepository responseRepository;
 
     /**
      * Creates a detailed list of weekly payments for a loan
@@ -23,19 +32,23 @@ public class SimpleInterestCalculatorServiceImpl implements InterestCalculatorSe
         List<Payment> thePayments = new ArrayList<>();
         Double weeklyPayment = calculateWeeklyPayment(request.getAmount(), request.getRate(), request.getTerms());
 
+        InterestRequest savedRequest = requestRepository.save(request);
+
         LocalDate today = LocalDate.now();
         LocalDate paymentDate = today.plusWeeks(1);
 
         for(int i=1; i<= request.getTerms(); i++){
             Payment payment = Payment.builder()
                     .payment_date(paymentDate)
+                    .request(savedRequest)
                     .id(null)
                     .payment_number(i)
                     .amount(weeklyPayment)
                     .build();
 
+            Payment savedPayment = responseRepository.save(payment);
+            thePayments.add(savedPayment);
             paymentDate = paymentDate.plusWeeks(1);
-            thePayments.add(payment);
         }
         return thePayments;
     }
